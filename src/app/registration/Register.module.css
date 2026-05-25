@@ -1,0 +1,17 @@
+.mainWrapper {
+  /* Sets the light background color from your screenshots */
+  background-color: #f8fafc; 
+  
+  /* Centers the content vertically and horizontally */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Ensures the background covers the full screen height */
+  min-height: 100vh;
+  width: 100%;
+  
+  /* Prevents the card from touching the edges on mobile */
+  padding: 20px;
+  box-sizing: border-box;
+}

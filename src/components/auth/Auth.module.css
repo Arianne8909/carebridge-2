@@ -1,0 +1,231 @@
+
+
+/* =========================
+   THEME WRAPPER
+========================= */
+.wrapper[data-theme="ind"] {
+  --primary: #155dfb;
+  --primary-light: #f0f6ff;
+  --primary-border: #155dfb;
+}
+
+.wrapper[data-theme="org"] {
+  --primary: #16a34a;
+  --primary-light: #ecfdf5;
+  --primary-border: #16a34a;
+}
+
+/* =========================
+   PAGE LAYOUT
+========================= */
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ 
+  background: #eef3f2;
+  padding: 20px;
+}
+
+/* =========================
+   HEADER (OUTSIDE CARD)
+========================= */
+.header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--gray-900);
+}
+
+.logo span {
+  color: var(--teal);
+}
+
+.topBar {
+  width: 100%;
+  background: #eef3f2;
+  display: flex;
+  justify-content: flex-start;
+  padding: 20px;
+}
+
+
+.subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+/* =========================
+   CARD
+========================= */
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   USER TYPE SELECTOR
+========================= */
+.userTypeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.userTypeCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s ease;
+  background: white;
+}
+
+.userTypeCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-border);
+}
+
+/* ACTIVE STATES */
+.activeBlue {
+  border: 2px solid #155dfb;
+  background: #f0f6ff;
+}
+
+.activeGreen {
+  border: 2px solid #16a34a;
+  background: #ecfdf5;
+}
+
+.iconBox {
+  font-size: 20px;
+  margin-bottom: 6px;
+  color: var(--primary);
+}
+
+.userTypeCard h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.userTypeCard p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* =========================
+   LOGIN / SIGNUP TABS
+========================= */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0 20px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f1f4;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* =========================
+   FORM
+========================= */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.form input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  transition: 0.2s;
+}
+
+.form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(21, 93, 251, 0.1);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.buttonBlue {
+  margin-top: 10px;
+  padding: 14px;
+  background: #155dfb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.buttonBlue:hover {
+  background: #134fd0;
+}
+
+.buttonGreen {
+  margin-top: 10px;
+  padding: 14px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.buttonGreen:hover {
+  background: #12823d;
+}
+
+/* =========================
+   INFO BOX (ORG ONLY)
+========================= */
+.infoBox {
+  background: #e6f7ee;
+  border: 1px solid #b7ebc6;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #0f5132;
+  line-height: 1.4;
+}

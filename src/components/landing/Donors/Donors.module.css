@@ -1,0 +1,147 @@
+.section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, var(--teal-dark), #0284c7);
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 48px;
+}
+
+.grid {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 36px 28px;
+  width: 420px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.iconCircle,
+.iconCirclePurple {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 20px;
+
+  font-size: 24px;
+}
+
+.iconCircle {
+  background: var(--teal-light);
+  color: var(--teal);
+}
+
+.iconCirclePurple {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.cardTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+.cardText {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--gray-500);
+  margin-bottom: 24px;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  padding: 14px 24px;
+  border-radius: 12px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.primaryBtn {
+  background: var(--teal);
+  color: #fff;
+}
+
+.primaryBtn:hover {
+  background: var(--teal-dark);
+}
+
+.secondaryBtn {
+  background: #9333ea;
+  color: #fff;
+}
+
+.secondaryBtn:hover {
+  background: #7e22ce;
+}
+
+.meta {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--gray-400);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 30px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+}

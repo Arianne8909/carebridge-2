@@ -1,0 +1,35 @@
+.card {
+  background: #0d9488;
+  color: white;
+  border-radius: 24px;
+  padding: 30px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top h1 {
+  font-size: 60px;
+  margin-top: 10px;
+}
+
+.top button {
+  background: white;
+  border: none;
+  color: #0d9488;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}

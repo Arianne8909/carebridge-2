@@ -1,0 +1,29 @@
+.heroStats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+
+  flex-wrap: wrap;
+
+  margin-top: 60px;
+}
+
+.heroStat {
+  text-align: center;
+}
+
+.heroStatNum {
+  font-family: var(--font-head);
+
+  font-size: 32px;
+  font-weight: 800;
+
+  color: var(--gray-900);
+}
+
+.heroStatLabel {
+  font-size: 13px;
+  color: var(--gray-500);
+
+  margin-top: 2px;
+}

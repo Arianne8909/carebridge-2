@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import styles from "./Urgent.module.css";
 import { AiFillCheckCircle } from "react-icons/ai";
+import Link from "next/link";
 
 type Need = {
   id: number;
@@ -112,7 +113,8 @@ export default function Urgent() {
                 </div>
 
                 <div className={styles.actions}>
-                  <button className={styles.primary}>Fund</button>
+                  <Link href={`/needs/${need.id}`}> <button className={styles.primary}>Fund</button></Link>
+                 
                   <button className={styles.secondary}>Details</button>
                 </div>
               </div>

@@ -41,7 +41,8 @@ export default function Urgent() {
         );
 
         const data = await res.json();
-        setNeeds(data);
+console.log("API response:", data);
+setNeeds(Array.isArray(data) ? data : data.needs ?? data.data ?? []);
       } catch (err) {
         console.error(err);
         setNeeds([]);

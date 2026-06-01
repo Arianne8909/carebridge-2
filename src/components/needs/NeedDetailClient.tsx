@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import styles from "@/app/needs/[id]/NeedDetail.module.css";
+import styles from "./NeedDetail.module.css";
 
 const BASE_URL = "https://carebridge-dxrd.onrender.com/api";
 const PLATFORM_FEE_RATE = 0.015;

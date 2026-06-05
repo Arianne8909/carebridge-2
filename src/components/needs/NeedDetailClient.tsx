@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from "./NeedDetail.module.css";
 
@@ -8,7 +8,7 @@ const BASE_URL = "https://carebridge-dxrd.onrender.com/api";
 const PLATFORM_FEE_RATE = 0.015;
 const PRESET_AMOUNTS = [1000, 10000, 25000, 50000];
 
-/* ─── Types ─────────────────────────────────────────────────────────── */
+/* ─── Types ──────────────────────────────────────────────────────────── */
 interface Need {
   id: number;
   title: string;
@@ -51,7 +51,7 @@ interface AuthUser {
   token: string;
 }
 
-/* ─── Helpers ────────────────────────────────────────────────────────── */
+/* ─── Helpers ─────────────────────────────────────────────────────────── */
 function getInitials(name: string) {
   return name
     .split(" ")
@@ -80,7 +80,7 @@ function getStoredUser(): AuthUser | null {
   }
 }
 
-/* ─── Auth Modal ─────────────────────────────────────────────────────── */
+/* ─── Auth Modal ──────────────────────────────────────────────────────── */
 function AuthModal({
   onSuccess,
   onClose,
@@ -138,9 +138,7 @@ function AuthModal({
         onClick={(e) => e.stopPropagation()}
         style={{ position: "relative" }}
       >
-        <button className={styles.modalClose} onClick={onClose}>
-          ×
-        </button>
+        <button className={styles.modalClose} onClick={onClose}>×</button>
         <p className={styles.modalTitle}>
           {mode === "login" ? "Sign in to donate" : "Create an account"}
         </p>
@@ -207,7 +205,7 @@ function AuthModal({
   );
 }
 
-/* ─── Fund Panel ─────────────────────────────────────────────────────── */
+/* ─── Fund Panel ──────────────────────────────────────────────────────── */
 function FundPanel({
   need,
   user,
@@ -226,42 +224,37 @@ function FundPanel({
     donation: { id: number; status: string };
   } | null>(null);
   const [error, setError] = useState("");
+  const verifiedRef = useRef(false);
 
-  // Check for payment return (Paystack redirect back)
+  // Verify payment after Paystack redirect
   useEffect(() => {
+    if (verifiedRef.current) return;
     const params = new URLSearchParams(window.location.search);
     const ref = params.get("reference");
     if (!ref) return;
-
     const token = getToken();
     if (!token) return;
 
-    (async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/payments/verify`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ reference: ref }),
-        });
-        const data = await res.json();
-        if (res.ok && data.donation) {
+    verifiedRef.current = true;
+    fetch(`${BASE_URL}/payments/verify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ reference: ref }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.donation) {
           setSuccess({ amount: data.donation.amount, donation: data.donation });
-          // Clean URL
-          const clean = window.location.pathname;
-          window.history.replaceState({}, "", clean);
+          window.history.replaceState({}, "", window.location.pathname);
         }
-      } catch {
-        // silent — verification will be done by webhook anyway
-      }
-    })();
+      })
+      .catch(() => {});
   }, []);
 
-  const effectiveAmount = customAmount
-    ? parseInt(customAmount, 10) || 0
-    : selectedAmount;
+  const effectiveAmount = customAmount ? parseInt(customAmount, 10) || 0 : selectedAmount;
   const platformFee = Math.max(1, Math.round(effectiveAmount * PLATFORM_FEE_RATE));
   const toFacility = effectiveAmount - platformFee;
 
@@ -271,12 +264,10 @@ function FundPanel({
       setShowAuth(true);
       return;
     }
-
     if (effectiveAmount < 100) {
       setError("Minimum donation is ₦100.");
       return;
     }
-
     setError("");
     setLoading(true);
     try {
@@ -288,11 +279,9 @@ function FundPanel({
         },
         body: JSON.stringify({ need_id: need.id, amount: effectiveAmount }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not initialize payment.");
 
-      // Use Paystack inline popup if available, else redirect
       if (data.access_code) {
         try {
           // @ts-expect-error – PaystackPop loaded from CDN
@@ -320,15 +309,13 @@ function FundPanel({
           You will receive photo proof within 48 hours.
         </p>
         <div className={styles.successDonation}>
-          <div className={styles.successAmount}>
-            {formatNaira(success.amount)}
-          </div>
+          <div className={styles.successAmount}>{formatNaira(success.amount)}</div>
           <div className={styles.successMeta}>
             Ref #{success.donation.id} · Status: {success.donation.status}
           </div>
         </div>
-        <Link href="/needs" style={{ textDecoration: "none" }}>
-          <button className={styles.ctaBtn}>← Back to needs</button>
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <button className={styles.ctaBtn}>← Back to Needs</button>
         </Link>
       </div>
     );
@@ -359,9 +346,7 @@ function FundPanel({
             <button
               key={amt}
               className={`${styles.amountBtn} ${
-                !customAmount && selectedAmount === amt
-                  ? styles.amountBtnActive
-                  : ""
+                !customAmount && selectedAmount === amt ? styles.amountBtnActive : ""
               }`}
               onClick={() => {
                 setSelectedAmount(amt);
@@ -386,7 +371,10 @@ function FundPanel({
         </div>
 
         {user && (
-          <p style={{ fontSize: "0.8rem", color: "#6b7280", marginBottom: "1rem" }}>
+          <p
+            suppressHydrationWarning
+            style={{ fontSize: "0.8rem", color: "#6b7280", marginBottom: "1rem" }}
+          >
             Donating as <strong>{user.full_name}</strong> ·{" "}
             <button
               style={{
@@ -434,21 +422,17 @@ function FundPanel({
           {loading ? (
             <span className={styles.spinner} />
           ) : (
-            <>
-              💛 Give {effectiveAmount >= 100 ? formatNaira(effectiveAmount) : ""} Now →
-            </>
+            <>💛 Give {effectiveAmount >= 100 ? formatNaira(effectiveAmount) : ""} Now →</>
           )}
         </button>
 
-        <p className={styles.secureNote}>
-          🔒 Secured by Paystack · CBN licensed
-        </p>
+        <p className={styles.secureNote}>🔒 Secured by Paystack · CBN licensed</p>
       </div>
     </>
   );
 }
 
-/* ─── Deliver Panel ──────────────────────────────────────────────────── */
+/* ─── Deliver Panel ───────────────────────────────────────────────────── */
 function DeliverPanel({ need }: { need: Need }) {
   const facility = need.facility;
   const phone = facility?.contact_phone ?? need.contact_phone ?? "";
@@ -504,9 +488,7 @@ function DeliverPanel({ need }: { need: Need }) {
         <div className={styles.contactItem}>
           <div className={styles.contactIcon}>🕐</div>
           <div className={styles.contactText}>
-            <span className={styles.contactTextLabel}>
-              Suggested delivery timeframe
-            </span>
+            <span className={styles.contactTextLabel}>Suggested delivery timeframe</span>
             <span className={styles.contactTextValue}>Within 3–5 days</span>
           </div>
         </div>
@@ -521,14 +503,15 @@ function DeliverPanel({ need }: { need: Need }) {
   );
 }
 
-/* ─── Main component ─────────────────────────────────────────────────── */
+/* ─── Main Component ──────────────────────────────────────────────────── */
 export default function NeedDetailClient({ need }: { need: Need }) {
   const [activeTab, setActiveTab] = useState<"fund" | "deliver">("fund");
-  // Lazy initializer runs once on mount — reads localStorage without triggering a second render
-  const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
+  const [user, setUser] = useState<AuthUser | null>(
+    typeof window !== "undefined" ? getStoredUser() : null
+  );
 
+  // Inject Paystack script
   useEffect(() => {
-    // Inject Paystack inline JS (side-effect only, no setState)
     if (!document.getElementById("paystack-js")) {
       const script = document.createElement("script");
       script.id = "paystack-js";
@@ -545,35 +528,30 @@ export default function NeedDetailClient({ need }: { need: Need }) {
   const fulfillmentRate = facility?.fulfillment_rate ?? 94;
   const needsFulfilled = facility?.needs_fulfilled ?? 12;
   const avgDeliveryHours = facility?.avg_delivery_hours ?? 28;
-
   const cashEquivalent = need.cash_equivalent ?? 0;
   const totalDonated = need.total_donated ?? 0;
   const progress = cashEquivalent > 0 ? Math.min((totalDonated / cashEquivalent) * 100, 100) : 0;
-
-  const urgencyLabel = need.urgency === "critical" ? "! Critical" : `! ${need.urgency?.charAt(0).toUpperCase()}${need.urgency?.slice(1) ?? "High"} Urgency`;
+  const urgencyLabel =
+    need.urgency === "critical"
+      ? "! Critical"
+      : `! ${need.urgency?.charAt(0).toUpperCase()}${need.urgency?.slice(1) ?? "High"} Urgency`;
 
   return (
     <div className={styles.page}>
-      {/* Topbar */}
       <header className={styles.topbar}>
         <span className={styles.brand}>CareBridge OVC</span>
-        <Link href="/" className={styles.backLink}>
-          ← Back to Needs
-        </Link>
+        <Link href="/" className={styles.backLink}>← Back to Needs</Link>
       </header>
 
       <div className={styles.container}>
-        {/* ── Left card ── */}
+        {/* Left card */}
         <div className={styles.leftCard}>
-          {/* Facility header */}
           <div className={styles.facilityHeader}>
             <div className={styles.avatar}>{getInitials(facilityName)}</div>
             <div className={styles.facilityInfo}>
               <h2>
                 {facilityName}
-                <span className={styles.verifiedBadge} title="Verified facility">
-                  ✓
-                </span>
+                <span className={styles.verifiedBadge} title="Verified facility">✓</span>
               </h2>
               <p className={styles.facilityMeta}>
                 {city}{city && country ? ", " : ""}{country}
@@ -582,18 +560,15 @@ export default function NeedDetailClient({ need }: { need: Need }) {
             </div>
           </div>
 
-          {/* AI score */}
           {need.priority_score != null && (
             <div className={styles.aiScoreChip}>
               🤖 AI Priority Score: {need.priority_score}
             </div>
           )}
 
-          {/* Title & description */}
           <h1 className={styles.needTitle}>{need.title}</h1>
           <p className={styles.needDescription}>{need.description}</p>
 
-          {/* Tags */}
           <div className={styles.tags}>
             <span className={styles.tagUrgency}>{urgencyLabel}</span>
             {need.category && (
@@ -604,28 +579,22 @@ export default function NeedDetailClient({ need }: { need: Need }) {
             <span className={styles.tagType}>Cash-in-Kind</span>
           </div>
 
-          {/* Progress bar */}
           {cashEquivalent > 0 && (
             <div className={styles.progressSection}>
               <div className={styles.progressLabel}>
                 <span>
-                  {formatNaira(totalDonated)} raised of{" "}
-                  {formatNaira(cashEquivalent)} goal
+                  {formatNaira(totalDonated)} raised of {formatNaira(cashEquivalent)} goal
                 </span>
                 <span>{Math.round(progress)}%</span>
               </div>
               <div className={styles.progressTrack}>
-                <div
-                  className={styles.progressFill}
-                  style={{ width: `${progress}%` }}
-                />
+                <div className={styles.progressFill} style={{ width: `${progress}%` }} />
               </div>
             </div>
           )}
 
           <hr className={styles.divider} />
 
-          {/* Track record */}
           <div className={styles.trackRecord}>
             <p className={styles.trackTitle}>Facility Track Record</p>
             <div className={styles.trackStats}>
@@ -644,7 +613,6 @@ export default function NeedDetailClient({ need }: { need: Need }) {
             </div>
           </div>
 
-          {/* Fulfillment proof */}
           {need.fulfillment?.photo_url && need.fulfillment.verified && (
             <div className={styles.proofSection}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -654,15 +622,13 @@ export default function NeedDetailClient({ need }: { need: Need }) {
                 className={styles.proofImage}
               />
               {need.fulfillment.caption && (
-                <p className={styles.proofCaption}>
-                  ✅ {need.fulfillment.caption}
-                </p>
+                <p className={styles.proofCaption}>✅ {need.fulfillment.caption}</p>
               )}
             </div>
           )}
         </div>
 
-        {/* ── Right panel ── */}
+        {/* Right panel */}
         <div className={styles.rightPanel}>
           <div className={styles.tabRow}>
             <button

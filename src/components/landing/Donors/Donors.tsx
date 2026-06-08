@@ -9,7 +9,6 @@ const donorBenefits = [
   { icon: "🔒", title: "Secure donations", desc: "Bank-level security powered by Paystack and CBN licensed partners" },
   { icon: "📊", title: "Transparent reporting", desc: "Track exactly where your money went and who it helped" },
   { icon: "📸", title: "Impact updates", desc: "Receive photo proof within 48 hours of fulfillment" },
-  { icon: "🤖", title: "AI-powered recommendations", desc: "Discover needs that match your interests and giving history" },
 ];
 
 const facilityBenefits = [

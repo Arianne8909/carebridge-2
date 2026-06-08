@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import styles from "./Nav.module.css";
+import styles from "./SimpleNav.module.css";
 import Image from "next/image";
 
-export default function Nav() {
+export default function SimpleNav() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -21,9 +21,9 @@ export default function Nav() {
 </Link>
         <div className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
           <Link href="/needs" className={styles.link}>Explore Needs</Link>
-          <Link href="#donors" className={styles.link}>Donors</Link>
-          <Link href="#orphanages" className={styles.link}>Orphanages</Link>
-          <Link href="#featured-topics" className={styles.link}>Stories</Link>
+          <Link href="/#donors" className={styles.link}>Donors</Link>
+          <Link href="/#orphanages" className={styles.link}>Orphanages</Link>
+          <Link href="/#featured-topics" className={styles.link}>Stories</Link>
         </div>
 
         <div className={styles.actions}>

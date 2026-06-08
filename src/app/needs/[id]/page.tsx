@@ -1,4 +1,6 @@
 import NeedDetailClient from "@/components/needs/NeedDetailClient";
+import SimpleNav from "@/components/ui/SimpleNav/SimpleNav";
+import Footer from "@/components/landing/Footer/Footer";
 
 const BASE_URL = "https://carebridge-dxrd.onrender.com/api";
 
@@ -25,5 +27,11 @@ export default async function NeedDetailPage({
     return <div>Need not found</div>;
   }
 
-  return <NeedDetailClient need={need} />;
+  return (
+    <>
+      <SimpleNav />
+      <NeedDetailClient need={need} />
+      <Footer />
+    </>
+  );
 }

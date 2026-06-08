@@ -1,49 +1,41 @@
 import styles from "./HowItWorks.module.css";
-import { FaSearch, FaDonate, FaBoxOpen } from "react-icons/fa";
 
-type Step = {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-};
-
-const steps: Step[] = [
+const steps = [
   {
-    icon: <FaSearch />,
+    icon: "🔍",
     title: "Discover Verified Needs",
-    description:
-      "Browse real, verified requests from hospitals, homes, and communities across Africa.",
+    desc: "Browse real, verified requests from orphanages and communities across Africa.",
   },
   {
-    icon: <FaDonate />,
+    icon: "💳",
     title: "Donate Directly",
-    description:
-      "Send support directly to verified recipients — no middlemen, full transparency.",
+    desc: "Send support directly to verified recipients — no middlemen, full transparency.",
   },
   {
-    icon: <FaBoxOpen />,
+    icon: "📸",
     title: "See Impact Delivered",
-    description:
-      "Track deliveries and see proof that your contribution made a real difference.",
+    desc: "Receive photo proof within 48 hours that your donation made a real difference.",
   },
 ];
 
 export default function HowItWorks() {
   return (
     <section className={styles.section}>
-      <div className={styles.container}>
-        <h2 className={styles.title}>How It Works</h2>
-        <p className={styles.subtitle}>
-          Simple. Transparent. Direct impact in 3 steps.
-        </p>
+      <div className={styles.inner}>
+        <p className={styles.eyebrow}>How It Works</p>
+        <h2 className={styles.heading}>
+          Making Giving Simple,{" "}
+          <span className={styles.accent}>Transparent and Impactful</span>
+        </h2>
+        <p className={styles.sub}>Three simple steps connect verified needs with compassionate donors</p>
 
-        <div className={styles.grid}>
-          {steps.map((step, index) => (
-            <div key={index} className={styles.card}>
-              <div className={styles.iconCircle}>{step.icon}</div>
-
-              <h3 className={styles.cardTitle}>{step.title}</h3>
-              <p className={styles.cardText}>{step.description}</p>
+        <div className={styles.steps}>
+          {steps.map((step, i) => (
+            <div key={step.title} className={styles.step}>
+              <div className={styles.stepNum}>{i + 1}</div>
+              <div className={styles.stepIcon}>{step.icon}</div>
+              <h3>{step.title}</h3>
+              <p>{step.desc}</p>
             </div>
           ))}
         </div>

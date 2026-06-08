@@ -1,16 +1,18 @@
 .featured {
   padding: 3.5rem 7rem;
   margin-bottom: 2rem;
-  background: #f4f4f4;
 }
 
-.title {
-  font-size: 28px;
+.heading {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 800;
+  color: #0f2a5e;
+  margin: 0 auto 2rem;
   text-align: center;
-  margin-bottom: 24px;
-  color: #111827;
+  
 }
+
+.accent { color: #16a34a; }
 
 /* GRID */
 .container {

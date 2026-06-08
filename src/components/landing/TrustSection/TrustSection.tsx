@@ -1,62 +1,83 @@
 import styles from "./TrustSection.module.css";
 
-import { RiVerifiedBadgeFill } from "react-icons/ri";
-import { FaArrowTrendUp, FaRegClock } from "react-icons/fa6";
+const verificationSteps = [
+  { title: "Registration Verification", desc: "Government registration documents and legal status confirmed" },
+  { title: "Leadership Verification", desc: "Background checks on directors and key staff members" },
+  { title: "Location Verification", desc: "On-site visits and GPS coordinates confirmed" },
+  { title: "Community References", desc: "Local leaders and community members vouch for the organization" },
+  { title: "Ongoing Monitoring", desc: "Continuous reporting and annual re-verification required" },
+];
+
+const transparency = [
+  { icon: "🛡️", title: "Who they are helping", desc: "See the verified facility, location, and children served" },
+  { icon: "📋", title: "What they funded", desc: "Exact items, quantities, and costs listed for every need" },
+  { icon: "📍", title: "How funds were used", desc: "Itemized receipts and purchase documentation provided" },
+  { icon: "📈", title: "Impact created", desc: "Photo proof and impact stories within 48 hours of fulfillment" },
+];
+
+const pillars = [
+  { icon: "🛡️", label: "Verified", sub: "Organizations" },
+  { icon: "👁️", label: "100%", sub: "Transparent" },
+  { icon: "🕐", label: "48 Hours", sub: "Photo Proof" },
+  { icon: "💙", label: "Direct", sub: "Impact" },
+];
 
 export default function TrustSection() {
   return (
     <section className={styles.section}>
-      <div className={styles.container}>
-        <h2 className={styles.title}>Why Trust CareBridge?</h2>
-
-        <p className={styles.subtitle}>
-          Every donation is transparent, verified, and delivered directly to
-          children in need.
+      <div className={styles.inner}>
+        <h2 className={styles.heading}>
+          Trust Is <span className={styles.accent}>Our Product</span>
+        </h2>
+        <p className={styles.sub}>
+          We verify every organization and track every donation to ensure complete transparency
         </p>
 
         <div className={styles.grid}>
           <div className={styles.card}>
-            <div className={styles.iconCircle}>
-              <RiVerifiedBadgeFill />
-            </div>
-
-            <h3 className={styles.cardTitle}>
-              Verified Orphanages
-            </h3>
-
-            <p className={styles.cardText}>
-              Every orphanage is verified and vetted before joining the
-              platform.
-            </p>
+            <h3>Our Verification Process</h3>
+            <ul className={styles.list}>
+              {verificationSteps.map((s) => (
+                <li key={s.title} className={styles.listItem}>
+                  <span className={styles.check}>✅</span>
+                  <div>
+                    <strong>{s.title}</strong>
+                    <p>{s.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className={styles.card}>
-            <div className={styles.iconCircle}>
-              <FaArrowTrendUp />
+            <h3>Donor Transparency</h3>
+            <ul className={styles.list}>
+              {transparency.map((t) => (
+                <li key={t.title} className={styles.listItem}>
+                  <span className={styles.tIcon}>{t.icon}</span>
+                  <div>
+                    <strong>{t.title}</strong>
+                    <p>{t.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div className={styles.highlight}>
+              <div className={styles.highlightPct}>100%</div>
+              <p>of your intended donation reaches the facility</p>
+              <span>Platform fee (1.5%) is added on top</span>
             </div>
-
-            <h3 className={styles.cardTitle}>
-              Direct Payments
-            </h3>
-
-            <p className={styles.cardText}>
-              Your money goes directly to the orphanage with no middlemen.
-            </p>
           </div>
+        </div>
 
-          <div className={styles.card}>
-            <div className={styles.iconCircle}>
-              <FaRegClock />
+        <div className={styles.pillars}>
+          {pillars.map((p) => (
+            <div key={p.label} className={styles.pillar}>
+              <span className={styles.pillarIcon}>{p.icon}</span>
+              <strong>{p.label}</strong>
+              <span>{p.sub}</span>
             </div>
-
-            <h3 className={styles.cardTitle}>
-              Proof Within 48 Hours
-            </h3>
-
-            <p className={styles.cardText}>
-              Receive photo proof of how your donation was used within 48 hours.
-            </p>
-          </div>
+          ))}
         </div>
       </div>
     </section>

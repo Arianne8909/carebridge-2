@@ -1,17 +1,18 @@
+import Link from "next/link";
 import styles from "./CTAButtons.module.css";
-
-import Button from "@/components/ui/Button/Button";
 
 export default function CTAButtons() {
   return (
-    <div className={styles.heroBtns}>
-      <Button variant="primary" size="lg">
-        Browse Live Needs →
-      </Button>
-
-      <Button variant="outline" size="lg">
-        Register Your Home
-      </Button>
+    <div className={styles.wrap}>
+      <Link href="/needs" className={styles.primary}>
+        💙 Explore Needs
+      </Link>
+      <Link href="/whatsapp" className={styles.secondary}>
+        🏠 Register Your Orphanage
+      </Link>
+      <Link href="/auth" className={styles.outline}>
+        👤 Become a Donor
+      </Link>
     </div>
   );
 }

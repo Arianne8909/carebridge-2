@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styles from "./Auth.module.css";
 import { useRouter } from "next/navigation";
-import BackLink from "../ui/BackLink/BackLink";
+
 import { FaUser, FaBuilding } from "react-icons/fa";
 import Link from "next/link";
 
@@ -101,17 +101,11 @@ export default function AuthCard({ mode, setMode }: Props) {
 
   return (
     <div className={styles.container}>
-    <div className={styles.topBar}>  
-    <BackLink href="/"
-  text="Back to Home"/>
-</div>
+    
     <div className={styles.wrapper} data-theme={isOrg ? "org" : "ind"}>
       {/* HEADER */}
       
       <div className={styles.header}>
-        <div className={styles.logo}>
-        Care<span>Bridge</span> OVC
-      </div>
 
         <p className={styles.subtitle}>
           {mode === "login" ? "Welcome back" : "Create your account"}

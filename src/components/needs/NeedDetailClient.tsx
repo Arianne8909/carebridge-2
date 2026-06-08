@@ -538,10 +538,6 @@ export default function NeedDetailClient({ need }: { need: Need }) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.topbar}>
-        <span className={styles.brand}>CareBridge OVC</span>
-        <Link href="/" className={styles.backLink}>← Back to Needs</Link>
-      </header>
 
       <div className={styles.container}>
         {/* Left card */}

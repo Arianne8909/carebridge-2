@@ -47,8 +47,10 @@ const topics: Topic[] = [
 
 export default function FeaturedTopics() {
   return (
-    <section className={styles.featured}>
-      <h3 className={styles.title}>Featured Topics</h3>
+    <section className={styles.featured} id="featured-topics">
+      <h2 className={styles.heading}>
+          Featured <span className={styles.accent}>Topics</span>
+        </h2>
 
       <div className={styles.container}>
         {topics.map((topic) => (

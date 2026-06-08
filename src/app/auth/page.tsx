@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AuthCard from "@/components/auth/AuthCard";
+import SimpleNav from "@/components/ui/SimpleNav/SimpleNav";
 import styles from "@/components/auth/Auth.module.css"
 
 export default function AuthPage() {
@@ -10,6 +11,7 @@ export default function AuthPage() {
   return (
     <div className={styles.page}>
 
+      <SimpleNav />
       <AuthCard mode={mode} setMode={setMode} />
     </div>
   );

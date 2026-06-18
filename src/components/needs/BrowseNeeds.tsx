@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './BrowseNeeds.module.css';
 import Link from 'next/link';
-import { MdVerified } from "react-icons/md";
+import { MdVerified } from 'react-icons/md';
 
 type Urgency = 'critical' | 'high' | 'medium' | 'low';
 
@@ -50,27 +50,35 @@ const urgencyOrder: Record<Urgency, number> = {
 };
 
 function mapNeed(item: ApiNeed): Need {
-  const cash = Number(item.cash_equivalent || 0);
-  const donated = Number(item.total_donated || 0);
+  const cash = Number(item.cash_equivalent ?? 0);
+  const donated = Number(item.total_donated ?? 0);
 
   return {
     id: String(item.id),
+
     title: item.title || item.facility_name || 'Unknown Need',
     description: item.description || '',
+
     facility_name: item.facility_name,
     verified: item.facility_status === 'verified',
-    category: item.category || 'Other',
-    items: item.items || [],
+
+    category: (item.category || 'Other').trim(),
+    items: Array.isArray(item.items) ? item.items : [],
+
     cash_equivalent: cash,
     total_donated: donated,
-    urgency: item.urgency || 'medium',
+
+    urgency: (item.urgency as Urgency) || 'medium',
+
     children: Number(item.children_count || 0),
+
     posted: item.created_at
       ? new Date(item.created_at).toLocaleDateString('en-GB', {
           day: 'numeric',
           month: 'short',
         })
       : 'Unknown',
+
     location:
       [item.city, item.country].filter(Boolean).join(', ') ||
       'Unknown Location',
@@ -85,43 +93,51 @@ export default function BrowseNeeds() {
   const [category, setCategory] = useState('All');
   const [urgency, setUrgency] = useState('All');
 
-  useEffect(() => {
-    async function loadNeeds() {
-      try {
-        setLoading(true);
+ useEffect(() => {
+  async function loadNeeds() {
+    try {
+      setLoading(true);
 
-        const res = await fetch(`${API_BASE}/needs`);
+      const res = await fetch(`${API_BASE}/needs`);
+      const data = await res.json();
 
-        if (!res.ok) throw new Error('Failed to fetch needs');
+      console.log("RAW API RESPONSE:", data); // 👈 ADD THIS
 
-        const data: ApiNeed[] = await res.json();
-
-        setNeeds(data.map(mapNeed));
-      } catch (err) {
-        console.error('Failed to load needs:', err);
-      } finally {
-        setLoading(false);
-      }
+      setNeeds(data.map(mapNeed));
+    } catch (err) {
+      console.error("FAILED:", err);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    loadNeeds();
-  }, []);
+  loadNeeds();
+}, []);
 
   const filtered = useMemo(() => {
     return needs
       .filter((n) => {
         const q =
+          search.trim() === '' ||
           n.title.toLowerCase().includes(search.toLowerCase()) ||
           n.items.some((i) =>
             i.toLowerCase().includes(search.toLowerCase())
           );
 
-        const c = category === 'All' || n.category === category;
-        const u = urgency === 'All' || n.urgency === urgency;
+        const c =
+          category === 'All' ||
+          n.category.toLowerCase() === category.toLowerCase();
+
+        const u =
+          urgency === 'All' ||
+          n.urgency === urgency;
 
         return q && c && u;
       })
-      .sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency]);
+      .sort(
+        (a, b) =>
+          urgencyOrder[a.urgency] - urgencyOrder[b.urgency]
+      );
   }, [needs, search, category, urgency]);
 
   return (
@@ -129,15 +145,13 @@ export default function BrowseNeeds() {
       {/* HEADER */}
       <div className={styles.dashHeader}>
         <h1>Browse Live Needs</h1>
-        <p>
-          Support verified orphanages across Nigeria with direct, provable impact.
-        </p>
+        <p>Support verified orphanages across Nigeria with direct impact.</p>
       </div>
 
       {/* FILTER BAR */}
       <div className={styles.filterBar}>
         <input
-          placeholder="🔍 Search by facility or item..."
+          placeholder="🔍 Search needs..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -168,15 +182,12 @@ export default function BrowseNeeds() {
       {/* GRID */}
       <div className={styles.grid3}>
 
-        {/* LOADING STATE */}
+        {/* LOADING */}
         {loading ? (
           <>
-            <div className={styles.needCardSkeleton}></div>
-            <div className={styles.needCardSkeleton}></div>
-            <div className={styles.needCardSkeleton}></div>
-            <div className={styles.needCardSkeleton}></div>
-            <div className={styles.needCardSkeleton}></div>
-            <div className={styles.needCardSkeleton}></div>
+            <div className={styles.needCardSkeleton} />
+            <div className={styles.needCardSkeleton} />
+            <div className={styles.needCardSkeleton} />
           </>
         ) : filtered.length === 0 ? (
           <div className={styles.emptyState}>
@@ -197,8 +208,7 @@ export default function BrowseNeeds() {
                   </div>
 
                   <div className={styles.needLocation}>
-                    <span className={styles.needLocationPin}>📍</span>
-                    {need.location}
+                    📍 {need.location}
                   </div>
                 </div>
 
@@ -212,9 +222,11 @@ export default function BrowseNeeds() {
               </div>
 
               <ul className={styles.needItems}>
-                {need.items.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
+                {need.items?.length > 0 ? (
+                  need.items.map((item, i) => <li key={i}>{item}</li>)
+                ) : (
+                  <li>No items listed</li>
+                )}
               </ul>
 
               <div className={styles.needStatRow}>

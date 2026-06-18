@@ -181,12 +181,14 @@ export default function AuthCard({ mode, setMode }: Props) {
               required
             />
 
-            <button
-              disabled={loading}
-              className={isOrg ? styles.buttonGreen : styles.buttonBlue}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
+            <Link href="/dashboard">
+              <button
+                disabled={loading}
+                className={isOrg ? styles.buttonGreen : styles.buttonBlue}
+              >
+                {loading ? "Logging in..." : "Login"}
+              </button>
+            </Link>
           </form>
         )}
 

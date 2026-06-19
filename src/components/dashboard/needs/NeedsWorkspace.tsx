@@ -64,7 +64,7 @@ const API_BASE = "https://carebridge-dxrd.onrender.com/api";
 const categories = ["All", "Food", "Medical", "Education", "Shelter", "Clothing"];
 const urgencies = ["All", "critical", "high", "medium", "low"];
 const urgencyOrder: Record<Urgency, number> = { critical: 0, high: 1, medium: 2, low: 3 };
-const categoryInitial: Record<string, string> = { Food: "Food", Medical: "Med", Education: "Education", Shelter: "Home", Clothing: "Clothing" };
+const categoryInitial: Record<string, string> = { Food: "Food", Medical: "Med", Education: "Education", Shelter: "Shelter", Clothing: "Clothing" };
 function parseAmount(value: string) {
   return Number(value.replace(/[^0-9]/g, "")) || 0;
 }

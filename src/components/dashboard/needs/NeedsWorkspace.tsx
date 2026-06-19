@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Filter, MapPin, Search, WalletCards, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Filter, MapPin, PackageCheck, Search, Truck, WalletCards } from "lucide-react";
 import { MdVerified } from "react-icons/md";
 import { individualGifts, orgPortfolio } from "@/data/dashboardData";
 import styles from "@/app/dashboard/needs/page.module.css";
 
 type Variant = "org" | "individual";
 type Urgency = "critical" | "high" | "medium" | "low";
+type SupportMode = "fund" | "delivery";
 
 type ApiNeed = {
   id: string | number;
@@ -47,24 +48,30 @@ type PortfolioItem = {
   id: string;
   facility: string;
   category: string;
-  amount: string;
+  amount: number;
+  amountLabel: string;
   status: string;
   location: string;
-  children: string;
+  children: number;
   description: string;
+  contactPerson: string;
+  contactPhone: string;
+  deliveryAddress: string;
   items: string[];
 };
 
 const API_BASE = "https://carebridge-dxrd.onrender.com/api";
 const categories = ["All", "Food", "Medical", "Education", "Shelter", "Clothing"];
+const urgencies = ["All", "critical", "high", "medium", "low"];
 const urgencyOrder: Record<Urgency, number> = { critical: 0, high: 1, medium: 2, low: 3 };
-const statusClass: Record<string, string> = {
-  Active: styles.statusActive,
-  Matched: styles.statusMatched,
-  Fulfilled: styles.statusFulfilled,
-  Delivered: styles.statusFulfilled,
-  "In review": styles.statusMatched,
-};
+const categoryInitial: Record<string, string> = { Food: "Food", Medical: "Med", Education: "Education", Shelter: "Home", Clothing: "Clothing" };
+function parseAmount(value: string) {
+  return Number(value.replace(/[^0-9]/g, "")) || 0;
+}
+
+function formatNaira(value: number) {
+  return `NGN ${Number(value || 0).toLocaleString("en-NG")}`;
+}
 
 function mapNeed(item: ApiNeed): Need {
   return {
@@ -92,11 +99,15 @@ function getPortfolioItems(variant: Variant): PortfolioItem[] {
       id: `gift-${index}`,
       facility: gift.facility,
       category: gift.category,
-      amount: gift.amount,
+      amount: parseAmount(gift.amount),
+      amountLabel: gift.amount,
       status: gift.status,
       location: gift.date,
-      children: "Personal giving record",
-      description: `Your ${gift.amount} gift to ${gift.facility} is currently marked as ${gift.status.toLowerCase()}.`,
+      children: 1,
+      description: `Your ${gift.amount} gift to ${gift.facility} is being tracked with receipts and proof updates.`,
+      contactPerson: "CareBridge Support",
+      contactPhone: "+234 800 000 0000",
+      deliveryAddress: "Proof and receipts are attached to this giving record.",
       items: ["Receipt available", "Delivery proof tracked", "Impact update pending"],
     }));
   }
@@ -105,11 +116,15 @@ function getPortfolioItems(variant: Variant): PortfolioItem[] {
     id: `portfolio-${index}`,
     facility: row.facility,
     category: row.category,
-    amount: row.amount,
+    amount: parseAmount(row.amount),
+    amountLabel: row.amount,
     status: row.status,
     location: row.location,
-    children: `${row.children} children`,
-    description: `${row.facility} has an active ${row.category.toLowerCase()} commitment in your CareBridge portfolio.`,
+    children: row.children,
+    description: `${row.facility} has an active ${row.category.toLowerCase()} commitment in your CareBridge portfolio. Track details, funding, and delivery progress here.`,
+    contactPerson: index % 2 === 0 ? "Mrs Adaeze Okafor" : "Care Facility Lead",
+    contactPhone: "+234 803 123 4567",
+    deliveryAddress: `${row.location}, Nigeria`,
     items: ["Need matched to your giving parameters", "Facility details verified", "Fulfillment evidence will be attached"],
   }));
 }
@@ -120,12 +135,16 @@ export default function NeedsWorkspace({ variant }: { variant: Variant }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [urgency, setUrgency] = useState("All");
-  const [showFindNeeds, setShowFindNeeds] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
-  const [selectedMode, setSelectedMode] = useState<"details" | "fund">("details");
+  const [showMoreNeeds, setShowMoreNeeds] = useState(false);
+  const [autoFundSimilar, setAutoFundSimilar] = useState(false);
+  const [hiddenPortfolioIds, setHiddenPortfolioIds] = useState<string[]>([]);
+  const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(null);
+  const [supportMode, setSupportMode] = useState<SupportMode>("fund");
+  const [customAmount, setCustomAmount] = useState("");
 
-  const portfolioItems = useMemo(() => getPortfolioItems(variant), [variant]);
   const isIndividual = variant === "individual";
+  const portfolioItems = useMemo(() => getPortfolioItems(variant), [variant]);
+  const selectedPortfolio = portfolioItems.find((item) => item.id === selectedPortfolioId) || null;
 
   useEffect(() => {
     async function loadNeeds() {
@@ -145,6 +164,15 @@ export default function NeedsWorkspace({ variant }: { variant: Variant }) {
     loadNeeds();
   }, []);
 
+  const filteredPortfolio = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return portfolioItems
+      .filter((item) => !hiddenPortfolioIds.includes(item.id))
+      .filter((item) => category === "All" || item.category.toLowerCase() === category.toLowerCase())
+      .filter((item) => !query || [item.facility, item.category, item.location].join(" ").toLowerCase().includes(query));
+  }, [category, hiddenPortfolioIds, portfolioItems, search]);
+
   const filteredNeeds = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -152,171 +180,189 @@ export default function NeedsWorkspace({ variant }: { variant: Variant }) {
       .filter((need) => {
         const matchesSearch =
           !query ||
-          need.title.toLowerCase().includes(query) ||
-          need.facilityName.toLowerCase().includes(query) ||
-          need.items.some((item) => item.toLowerCase().includes(query));
+          [need.title, need.facilityName, need.location, need.description, ...need.items].join(" ").toLowerCase().includes(query);
         const matchesCategory = category === "All" || need.category.toLowerCase() === category.toLowerCase();
         const matchesUrgency = urgency === "All" || need.urgency === urgency;
-
         return matchesSearch && matchesCategory && matchesUrgency;
       })
       .sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency]);
   }, [needs, search, category, urgency]);
 
-  function openItem(item: PortfolioItem, mode: "details" | "fund") {
-    setSelectedItem(item);
-    setSelectedMode(mode);
+  function hidePortfolio(id: string) {
+    setHiddenPortfolioIds((current) => [...current, id]);
+    if (selectedPortfolioId === id) setSelectedPortfolioId(null);
+  }
+
+  if (selectedPortfolio) {
+    const selectedAmount = Number(customAmount) || selectedPortfolio.amount;
+    const fee = Math.round(selectedAmount * 0.015);
+
+    return (
+      <div className={styles.page}>
+        <div className={styles.detailTopbar}>
+          <div>
+            <p>{isIndividual ? "Giving detail" : "Portfolio detail"}</p>
+            <h1>{selectedPortfolio.facility}</h1>
+          </div>
+          <button onClick={() => setSelectedPortfolioId(null)}><ArrowLeft size={17} /> Back to Needs</button>
+        </div>
+
+        <div className={styles.detailLayout}>
+          <section className={styles.card}>
+            <div className={styles.metricGrid}>
+              <div><span>Total donated</span><strong>{formatNaira(selectedPortfolio.amount)}</strong></div>
+              <div><span>Category</span><strong>{selectedPortfolio.category}</strong></div>
+              <div><span>Status</span><strong>{selectedPortfolio.status}</strong></div>
+            </div>
+
+            <div className={styles.projectBlock}>
+              <h2>Project details</h2>
+              <p>{selectedPortfolio.description}</p>
+            </div>
+
+            <div className={styles.projectBlock}>
+              <h2>{isIndividual ? "Giving information" : "Facility information"}</h2>
+              <div className={styles.infoGrid}>
+                <div><span>Name</span><strong>{selectedPortfolio.facility}</strong></div>
+                <div><span>Contact person</span><strong>{selectedPortfolio.contactPerson}</strong></div>
+                <div><span>Phone</span><strong>{selectedPortfolio.contactPhone}</strong></div>
+                <div><span>Address</span><strong>{selectedPortfolio.deliveryAddress}</strong></div>
+              </div>
+            </div>
+
+            <div className={styles.projectBlock}>
+              <h2>Tracked requirements</h2>
+              <ul className={styles.detailItems}>{selectedPortfolio.items.map((item) => <li key={item}>{item}</li>)}</ul>
+            </div>
+          </section>
+
+          <aside className={styles.card}>
+            <h2 className={styles.sideHeading}>{isIndividual ? "Support again" : "Support options"}</h2>
+            <div className={styles.modeGrid}>
+              <button className={supportMode === "fund" ? styles.modeActive : ""} onClick={() => setSupportMode("fund")}><WalletCards size={18} /> Fund from Wallet</button>
+              <button className={supportMode === "delivery" ? styles.modeActive : ""} onClick={() => setSupportMode("delivery")}><Truck size={18} /> Commit to Deliver</button>
+            </div>
+
+            {supportMode === "fund" ? (
+              <div className={styles.supportPanel}>
+                <p>Fund this need from your wallet.</p>
+                <div className={styles.amountButtons}>{[1000, 10000, 25000, selectedPortfolio.amount].map((amount) => <button key={amount} onClick={() => setCustomAmount(String(amount))}>{formatNaira(amount)}</button>)}</div>
+                <input type="number" value={customAmount} onChange={(event) => setCustomAmount(event.target.value)} placeholder={String(selectedPortfolio.amount)} />
+                <div className={styles.paymentSummary}><div><span>Selected</span><strong>{formatNaira(selectedAmount)}</strong></div><div><span>Transaction fee</span><strong>{formatNaira(fee)}</strong></div><div><span>Total</span><strong>{formatNaira(selectedAmount + fee)}</strong></div></div>
+                <Link href={isIndividual ? "/individual-dashboard/needs" : "/dashboard/finances"} className={styles.confirmFund}>{isIndividual ? "Continue gift" : "Continue funding"}</Link>
+              </div>
+            ) : (
+              <div className={styles.supportPanel}>
+                <p>Commit to deliver the listed items and track progress.</p>
+                <div className={styles.deliverySteps}><span><CheckCircle2 size={16} /> Commit</span><span><Truck size={16} /> In transit</span><span><PackageCheck size={16} /> Delivered</span></div>
+                <button className={styles.confirmButton}>Confirm delivery commitment</button>
+              </div>
+            )}
+          </aside>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className={styles.page}>
-      <section className={styles.hero}>
+      <div className={styles.pageIntro}>
         <div>
-          <p>{isIndividual ? "Needs / giving" : "Needs / opportunities"}</p>
-          <h1>{isIndividual ? "Track your active gifts and discover new verified needs." : "Manage current commitments and discover new verified needs."}</h1>
-          <span>{isIndividual ? "Review your active giving records before opening the wider list of live needs." : "Keep active portfolio work visible while finding new requests that match your giving parameters."}</span>
+          <h1>{isIndividual ? "Needs / Giving" : "Needs / Opportunities"}</h1>
+          <p>{isIndividual ? "Your active giving first, then discover new verified funding opportunities." : "Your active portfolio first, then discover new funding opportunities."}</p>
         </div>
-        <button className={styles.heroAction} onClick={() => setShowFindNeeds((value) => !value)}>
-          {showFindNeeds ? "Hide new needs" : "Find new needs"}
-        </button>
-      </section>
+      </div>
 
       <section className={styles.card}>
-        <div className={styles.sectionHeader}>
+        <div className={styles.filterBar}>
+          <label className={styles.searchBox}>
+            <Search size={18} />
+            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search facility, need, or location" />
+          </label>
+          <label className={styles.selectBox}>
+            <Filter size={17} />
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              {categories.map((item) => <option key={item}>{item === "All" ? "All Categories" : item}</option>)}
+            </select>
+          </label>
+          <select className={styles.select} value={urgency} onChange={(event) => setUrgency(event.target.value)}>
+            {urgencies.map((item) => <option key={item} value={item}>{item === "All" ? "All Urgency Levels" : item}</option>)}
+          </select>
+        </div>
+        <label className={styles.toggleRow}>
+          <span>{isIndividual ? "Auto-suggest similar needs" : "Auto-fund matched needs"}</span>
+          <input type="checkbox" checked={autoFundSimilar} onChange={(event) => setAutoFundSimilar(event.target.checked)} />
+          <b>{autoFundSimilar ? "On" : "Off"}</b>
+        </label>
+      </section>
+
+      <section className={styles.flowSection}>
+        <div className={styles.flowHeader}>
           <div>
-            <p>{isIndividual ? "My giving" : "Portfolio"}</p>
-            <h2>{isIndividual ? "Active giving" : "Active portfolio"}</h2>
+            <h2>{isIndividual ? "Active Giving" : "Active Portfolio"}</h2>
+            <p>{filteredPortfolio.length} tracked needs visible</p>
           </div>
-          <div className={styles.tabGroup}>
-            <span>{isIndividual ? "4 Gifts" : "14 Active"}</span>
-            <span>{isIndividual ? "2 Pending" : "6 Matched"}</span>
-            <span>{isIndividual ? "15 Proofs" : "3 Fulfilled"}</span>
-          </div>
+          {!showMoreNeeds && <button onClick={() => setShowMoreNeeds(true)}>Discover & Support</button>}
         </div>
 
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>{isIndividual ? "Facility" : "Facility"}</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {portfolioItems.map((row) => (
-                <tr key={row.id}>
-                  <td><strong>{row.facility}</strong><span>{row.location} | {row.children}</span></td>
-                  <td><span className={styles.categoryPill}>{row.category}</span></td>
-                  <td className={styles.amount}>{row.amount}</td>
-                  <td><span className={`${styles.status} ${statusClass[row.status] ?? styles.statusActive}`}>{row.status}</span></td>
-                  <td>
-                    <div className={styles.tableActions}>
-                      <button onClick={() => openItem(row, "details")}>Details</button>
-                      <button className={styles.tableFund} onClick={() => openItem(row, "fund")}>{isIndividual ? "Give again" : "Fund"}</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {selectedItem && (
-          <div className={styles.detailPanel}>
-            <div className={styles.detailHeader}>
-              <div>
-                <p>{selectedMode === "fund" ? "Funding" : "Need details"}</p>
-                <h3>{selectedItem.facility}</h3>
-              </div>
-              <button aria-label="Close details" onClick={() => setSelectedItem(null)}><X size={18} /></button>
-            </div>
-            <div className={styles.detailGrid}>
-              <div>
-                <span>Category</span>
-                <strong>{selectedItem.category}</strong>
-              </div>
-              <div>
-                <span>Current amount</span>
-                <strong>{selectedItem.amount}</strong>
-              </div>
-              <div>
-                <span>Status</span>
-                <strong>{selectedItem.status}</strong>
-              </div>
-              <div>
-                <span>Location / date</span>
-                <strong>{selectedItem.location}</strong>
-              </div>
-            </div>
-            <p className={styles.detailCopy}>{selectedItem.description}</p>
-            <ul className={styles.detailItems}>{selectedItem.items.map((item) => <li key={item}>{item}</li>)}</ul>
-            {selectedMode === "fund" && (
-              <div className={styles.fundPanel}>
-                <div><WalletCards size={18} /><span>{isIndividual ? "Choose a giving amount" : "Choose a funding amount"}</span></div>
-                <div className={styles.amountButtons}><button>NGN 10,000</button><button>NGN 25,000</button><button>NGN 50,000</button><button>Custom</button></div>
-                <Link href={isIndividual ? "/individual-dashboard/needs" : "/dashboard/finances"} className={styles.confirmFund}>{isIndividual ? "Continue gift" : "Continue funding"}</Link>
-              </div>
-            )}
+        {filteredPortfolio.length === 0 ? (
+          <div className={styles.emptyState}>No portfolio needs match your current filters.</div>
+        ) : (
+          <div className={styles.portfolioGrid}>
+            {filteredPortfolio.map((item) => (
+              <article key={item.id} className={styles.portfolioCard}>
+                <div className={styles.portfolioBody}>
+                  <div className={styles.cardKicker}>
+                    <span className={`${styles.categoryIcon} ${styles[`visual${item.category}`] || ""}`}>{categoryInitial[item.category] || item.category.slice(0, 3)}</span>
+                    <p>{item.status}</p>
+                  </div>
+                  <div><h3>{item.facility}</h3><span>{item.location}</span></div>
+                  <p className={styles.portfolioDesc}>{item.description}</p>
+                  <div className={styles.amountBox}><span>Amount</span><strong>{formatNaira(item.amount)}</strong></div>
+                  <div className={styles.portfolioActions}>
+                    <button onClick={() => setSelectedPortfolioId(item.id)}>View</button>
+                    <button onClick={() => hidePortfolio(item.id)}>Hide</button>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </section>
 
-      {showFindNeeds && (
-        <section id="find-needs" className={styles.card}>
-          <div className={styles.sectionHeader}>
+      {showMoreNeeds && (
+        <section className={styles.flowSection}>
+          <div className={styles.flowHeader}>
             <div>
-              <p>Live API</p>
-              <h2>Find new needs</h2>
+              <h2>Discover New Needs</h2>
+              <p>Additional verified opportunities outside your current portfolio.</p>
             </div>
-            <div className={styles.resultCount}>Showing <strong>{filteredNeeds.length}</strong> of <strong>{needs.length}</strong></div>
-          </div>
-
-          <div className={styles.filterBar}>
-            <label className={styles.searchBox}>
-              <Search size={18} />
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search needs, items, or facilities" />
-            </label>
-            <label className={styles.selectBox}>
-              <Filter size={17} />
-              <select value={category} onChange={(event) => setCategory(event.target.value)}>
-                {categories.map((item) => <option key={item}>{item}</option>)}
-              </select>
-            </label>
-            <select className={styles.select} value={urgency} onChange={(event) => setUrgency(event.target.value)}>
-              <option value="All">All urgency</option>
-              <option value="critical">Critical</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
+            <button className={styles.secondaryButton} onClick={() => setShowMoreNeeds(false)}>Hide discovery</button>
           </div>
 
           {loading ? (
             <div className={styles.grid}><div className={styles.skeleton} /><div className={styles.skeleton} /><div className={styles.skeleton} /></div>
           ) : filteredNeeds.length === 0 ? (
-            <div className={styles.emptyState}>No needs match your filters.</div>
+            <div className={styles.emptyState}>No additional needs match your filters right now.</div>
           ) : (
             <div className={styles.grid}>
               {filteredNeeds.map((need) => (
                 <article key={need.id} className={styles.needCard}>
-                  <div className={styles.needHead}>
-                    <div>
-                      <div className={styles.needTitle}><h3>{need.title}</h3>{need.verified && <MdVerified className={styles.verified} />}</div>
-                      <p><MapPin size={15} /> {need.location}</p>
+                  <div className={styles.needCardInner}>
+                    <div className={styles.cardKicker}>
+                      <span className={`${styles.categoryIcon} ${styles[`visual${need.category}`] || ""}`}>{categoryInitial[need.category] || need.category}</span>
+                      <p className={styles.urgencyText}>{need.urgency}</p>
                     </div>
-                    <span className={`${styles.badge} ${styles[need.urgency]}`}>{need.urgency}</span>
-                  </div>
-                  <div className={styles.needCategory}>{need.category.toLowerCase()}</div>
-                  <p className={styles.needDesc}>{need.description}</p>
-                  <ul className={styles.needItems}>{need.items.length > 0 ? need.items.slice(0, 3).map((item) => <li key={item}>{item}</li>) : <li>No items listed</li>}</ul>
-                  <div className={styles.needMeta}><span>{need.children} children impacted</span><span>{need.posted}</span></div>
-                  <div className={styles.progressTrack}><i style={{ width: `${Math.min((need.totalDonated / Math.max(need.cashEquivalent, 1)) * 100, 100)}%` }} /></div>
-                  <div className={styles.needBottom}>
-                    <div><span>Cash equivalent</span><strong>NGN {need.cashEquivalent.toLocaleString()}</strong></div>
-                    <div className={styles.actions}><Link href={`/needs/${need.id}`} className={styles.fundBtn}>Fund</Link><Link href={`/needs/${need.id}`} className={styles.detailBtn}>Details</Link></div>
+                    <div className={styles.needHead}>
+                      <div>
+                        <div className={styles.needTitle}><h3>{need.title}</h3>{need.verified && <MdVerified className={styles.verified} />}</div>
+                        <p><MapPin size={15} /> {need.location} | {need.posted}</p>
+                      </div>
+                      <span className={`${styles.badge} ${styles[need.urgency]}`}>{need.urgency}</span>
+                    </div>
+                    <p className={styles.needDesc}>{need.description}</p>
+                    <div className={styles.discoveryStats}><div><span>Need value</span><strong>{formatNaira(need.cashEquivalent)}</strong></div><div><span>Children</span><strong>{need.children}</strong></div></div>
+                    <Link href={`/needs/${need.id}`} className={styles.fundBtn}>Open need</Link>
                   </div>
                 </article>
               ))}

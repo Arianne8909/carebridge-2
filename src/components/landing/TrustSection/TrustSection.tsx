@@ -81,7 +81,7 @@ const pillars = [
 
 export default function TrustSection() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} id="trust">
       <div className={styles.inner}>
         <h2 className={styles.heading}>
           Trust Is <span className={styles.accent}>Our Product</span>

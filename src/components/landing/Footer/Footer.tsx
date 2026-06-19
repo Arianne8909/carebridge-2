@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./Footer.module.css";
-import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -8,14 +8,14 @@ export default function Footer() {
       <div className={styles.inner}>
         <div className={styles.brand}>
           <Link href="/" className={styles.logo}>
-  <Image
-    src="/media/logo.png"
-    alt="CareBridge OVC"
-    width={180}
-    height={50}
-    priority
-  />
-</Link>
+            <Image
+              src="/media/logo.png"
+              alt="CareBridge OVC"
+              width={180}
+              height={50}
+              priority
+            />
+          </Link>
           <p className={styles.tagline}>Connecting Compassion to Impact</p>
           <p className={styles.desc}>
             Making every child visible. Making every need addressable.
@@ -25,36 +25,35 @@ export default function Footer() {
         <div className={styles.col}>
           <h4>Platform</h4>
           <Link href="/needs">Explore Needs</Link>
-          <Link href="#donors">Donors</Link>
-          <Link href="#featured-topics"> Stories</Link>
+          <Link href="/#donors">Donors</Link>
+          <Link href="/#featured-topics">Stories</Link>
         </div>
 
         <div className={styles.col}>
           <h4>Support</h4>
-          <a href="#">Help Center</a>
           <Link href="/#how-it-works">How It Works</Link>
-          <a href="#">Trust & Safety</a>
-          <a href="#">Contact Us</a>
+          <Link href="/#trust">Trust & Safety</Link>
+          <Link href="/contact">Contact Us</Link>
         </div>
 
         <div className={styles.col}>
           <h4>Connect</h4>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
+          <Link href="/coming-soon">Facebook</Link>
+          <Link href="/coming-soon">Twitter</Link>
+          <Link href="/coming-soon">Instagram</Link>
+          <Link href="/coming-soon">LinkedIn</Link>
           <Link href="/needs" className={styles.donateBtn}>
-            💚 Donate
+            Donate
           </Link>
         </div>
       </div>
 
       <div className={styles.bottom}>
-        <p>© 2026 CareBridge Africa. All rights reserved.</p>
+        <p>(c) 2026 CareBridge OVC. All rights reserved.</p>
         <div className={styles.legal}>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
+          <Link href="/legal#privacy">Privacy Policy</Link>
+          <Link href="/legal#terms">Terms of Service</Link>
+          <Link href="/legal#cookies">Cookie Policy</Link>
         </div>
       </div>
     </footer>

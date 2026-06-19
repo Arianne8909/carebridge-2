@@ -1,5 +1,5 @@
-﻿import BrowseNeeds from "@/components/needs/BrowseNeeds";
+﻿import NeedsWorkspace from "@/components/dashboard/needs/NeedsWorkspace";
 
 export default function NeedsPage() {
-  return <BrowseNeeds />;
+  return <NeedsWorkspace variant="org" />;
 }

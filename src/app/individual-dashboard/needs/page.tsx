@@ -1,5 +1,5 @@
-﻿import BrowseNeeds from "@/components/needs/BrowseNeeds";
+﻿import NeedsWorkspace from "@/components/dashboard/needs/NeedsWorkspace";
 
 export default function IndividualNeedsPage() {
-  return <BrowseNeeds />;
+  return <NeedsWorkspace variant="individual" />;
 }

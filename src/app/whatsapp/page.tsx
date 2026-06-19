@@ -22,49 +22,6 @@ export default function WhatsAppRegistrationPage() {
 </section>
 
         <section className={styles.content}>
-          <div className={styles.split}>
-            <div className={styles.card}>
-              <h2>WhatsApp Registration (Coming Soon!)</h2>
-              <h3>How the flow will work</h3>
-              <ul className={styles.list}>
-                <li>CareBridge verifies the representative and facility location.</li>
-                <li>The orphanage shares child count, priority needs, and documents.</li>
-                <li>Our team reviews the submission before publishing verified needs.</li>
-                <li>The orphanage receives status updates directly in WhatsApp.</li>
-              </ul>
-            </div>
-
-            <div className={styles.chat} aria-label="WhatsApp registration mockup">
-              <div className={styles.chatHeader}>
-                <span className={styles.avatar}>CB</span>
-                <div>
-                  <strong>CareBridge OVC</strong>
-                  <p>Registration assistant</p>
-                </div>
-              </div>
-              <div className={styles.messages}>
-                <div className={styles.bubble}>
-                  Welcome to CareBridge. What is the name of your orphanage?
-                </div>
-                <div className={styles.bubbleAlt}>Hope Haven Children Home</div>
-                <div className={styles.bubble}>
-                  Great. Please share your location, contact person, and current
-                  number of children in your care.
-                </div>
-                <div className={styles.bubbleAlt}>
-                  Lagos. Amaka Okorie. 42 children.
-                </div>
-                <div className={styles.bubble}>
-                  Thank you. Our verification team will review your registration
-                  before needs can be listed.
-                </div>
-              </div>
-              <div className={styles.inputBar}>Coming soon</div>
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.content}>
           <div className={styles.panel}>
             <h2>Registration form</h2>
             <p>
@@ -158,6 +115,50 @@ export default function WhatsAppRegistrationPage() {
             </p>
           </div>
         </section>
+
+<section className={styles.content}>
+          <div className={styles.split}>
+            <div className={styles.card}>
+              <h2>WhatsApp Registration (Coming Soon!)</h2>
+              <h3>How the flow will work</h3>
+              <ul className={styles.list}>
+                <li>CareBridge verifies the representative and facility location.</li>
+                <li>The orphanage shares child count, priority needs, and documents.</li>
+                <li>Our team reviews the submission before publishing verified needs.</li>
+                <li>The orphanage receives status updates directly in WhatsApp.</li>
+              </ul>
+            </div>
+
+            <div className={styles.chat} aria-label="WhatsApp registration mockup">
+              <div className={styles.chatHeader}>
+                <span className={styles.avatar}>CB</span>
+                <div>
+                  <strong>CareBridge OVC</strong>
+                  <p>Registration assistant</p>
+                </div>
+              </div>
+              <div className={styles.messages}>
+                <div className={styles.bubble}>
+                  Welcome to CareBridge. What is the name of your orphanage?
+                </div>
+                <div className={styles.bubbleAlt}>Hope Haven Children Home</div>
+                <div className={styles.bubble}>
+                  Great. Please share your location, contact person, and current
+                  number of children in your care.
+                </div>
+                <div className={styles.bubbleAlt}>
+                  Lagos. Amaka Okorie. 42 children.
+                </div>
+                <div className={styles.bubble}>
+                  Thank you. Our verification team will review your registration
+                  before needs can be listed.
+                </div>
+              </div>
+              <div className={styles.inputBar}>Coming soon</div>
+            </div>
+          </div>
+        </section>
+
       </main>
       <Footer />
     </>

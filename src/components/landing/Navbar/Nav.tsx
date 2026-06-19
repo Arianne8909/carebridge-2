@@ -25,8 +25,11 @@ export default function Nav() {
           <Link href="/needs" className={styles.link}>
             Explore Needs
           </Link>
-          <Link href="/#donors" className={styles.link}>
+          <Link href="/auth" className={styles.link}>
             Donors
+          </Link>
+          <Link href="/whatsapp" className={styles.link}>
+            Orhanages
           </Link>
           <Link href="/#featured-topics" className={styles.link}>
             Stories

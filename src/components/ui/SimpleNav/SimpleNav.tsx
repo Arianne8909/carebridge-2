@@ -22,7 +22,6 @@ export default function SimpleNav() {
         <div className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
           <Link href="/needs" className={styles.link}>Explore Needs</Link>
           <Link href="/#donors" className={styles.link}>Donors</Link>
-          <Link href="/#orphanages" className={styles.link}>Orphanages</Link>
           <Link href="/#featured-topics" className={styles.link}>Stories</Link>
         </div>
 

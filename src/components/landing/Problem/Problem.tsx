@@ -31,7 +31,7 @@ export default function Problem() {
         </div>
 
         <div className={styles.bridge}>
-          <span>CareBridge bridges that gap.</span>
+          <span>CareBridge OVC bridges that gap.</span>
         </div>
       </div>
     </section>

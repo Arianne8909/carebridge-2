@@ -1,155 +1,27 @@
-// import Link from "next/link";
+﻿import { Download, MoreHorizontal, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { orgPortfolio, orgStats } from "@/data/dashboardData";
 import styles from "./page.module.css";
 
-
-const stats = [
-  {
-    label: "ANNUAL BUDGET",
-    value: "₦5M",
-    sub: "₦1.9M deployed · ₦3.1M remaining",
-    trend: null,
-  },
-  {
-    label: "NEEDS FUNDED",
-    value: "23",
-    sub: "+8 this quarter",
-    trend: "up",
-  },
-  {
-    label: "CHILDREN REACHED",
-    value: "847",
-    sub: "Across 11 facilities",
-    trend: "up",
-  },
-  {
-    label: "FULFILLMENT RATE",
-    value: "96%",
-    sub: "+4% vs Q1",
-    trend: "up",
-  },
-];
-
-const portfolio = [
-  { facility: "Graceland Home, Ibadan", category: "Food", amount: "₦45,000", status: "active" },
-  { facility: "House of Hope, Lagos", category: "Medical", amount: "₦22,000", status: "matched" },
-  { facility: "Bethel Rest Home, Ibadan", category: "Shelter", amount: "₦180,000", status: "active" },
-  { facility: "New Dawn Care Home", category: "Clothing", amount: "₦36,000", status: "fulfilled" },
-  { facility: "Covenant Care OVC", category: "Food", amount: "₦28,000", status: "fulfilled" },
-];
-
-const statusColor: Record<string, string> = {
-  active: styles.statusActive,
-  matched: styles.statusMatched,
-  fulfilled: styles.statusFulfilled,
-};
+const statusClass: Record<string, string> = { Active: styles.statusActive, Matched: styles.statusMatched, Fulfilled: styles.statusFulfilled };
 
 export default function DashboardPage() {
   return (
     <div className={styles.page}>
-      {/* Stat cards */}
-      <div className={styles.statGrid}>
-        {stats.map((s) => (
-          <div key={s.label} className={styles.statCard}>
-            <p className={styles.statLabel}>{s.label}</p>
-            <p className={styles.statValue}>{s.value}</p>
-            <p className={styles.statSub}>
-              {s.trend === "up" && <span className={styles.trendUp}>↑ </span>}
-              {s.sub}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.body}>
-        {/* Left — Portfolio table */}
-        <div className={styles.left}>
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <h2>Active Portfolio</h2>
-              <div className={styles.tabs}>
-                <span className={`${styles.tab} ${styles.tabActive}`}>14 Active</span>
-                <span className={styles.tab}>6 Matched</span>
-                <span className={styles.tab}>3 Fulfilled</span>
-              </div>
-            </div>
-
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>FACILITY</th>
-                  <th>CATEGORY</th>
-                  <th>AMOUNT</th>
-                  <th>STATUS</th>
-                  <th>ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {portfolio.map((row) => (
-                  <tr key={row.facility}>
-                    <td>{row.facility}</td>
-                    <td>
-                      <span className={styles.categoryTag}>{row.category}</span>
-                    </td>
-                    <td className={styles.amount}>{row.amount}</td>
-                    <td>
-                      <span className={`${styles.status} ${statusColor[row.status]}`}>
-                        {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
-                      </span>
-                    </td>
-                    <td>
-                      <button className={styles.moreBtn}>⋯</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Right — Giving parameters + ESG */}
-        <div className={styles.right}>
-          <div className={styles.card}>
-            <h3 className={styles.sideTitle}>Giving Parameters</h3>
-
-            <div className={styles.paramRow}>
-              <span className={styles.paramLabel}>Annual budget</span>
-              <span className={styles.paramValue}>₦5,000,000</span>
-            </div>
-
-            <div className={styles.paramRow}>
-              <span className={styles.paramLabel}>Categories</span>
-              <div className={styles.tags}>
-                <span className={styles.tag}>Food</span>
-                <span className={styles.tag}>Medical</span>
-                <span className={styles.tag}>Education</span>
-              </div>
-            </div>
-
-            <div className={styles.paramRow}>
-              <span className={styles.paramLabel}>Geography</span>
-              <span className={styles.paramValue}>Ibadan + Lagos</span>
-            </div>
-
-            <div className={styles.paramRow}>
-              <span className={styles.paramLabel}>Transaction fee</span>
-              <span className={styles.paramValue}>1.5% per need</span>
-            </div>
-
-            <button className={styles.editBtn}>Edit Parameters</button>
-          </div>
-
-          {/* ESG report card */}
-          <div className={styles.esgCard}>
-            <p className={styles.esgTitle}>Q1 2026 ESG Report Ready</p>
-            <p className={styles.esgSub}>Auto-generated · 12 pages · Includes photo evidence</p>
-            <div className={styles.esgActions}>
-              <button className={styles.esgDownload}>⬇ Download PDF</button>
-              <button className={styles.esgPreview}>Preview</button>
-            </div>
-          </div>
-        </div>
+      <section className={styles.hero}>
+        <div><p className={styles.eyebrow}>Organisation dashboard</p><h1>Funding verified needs with clear proof of impact.</h1><p>Track budgets, active commitments, fulfillment evidence, and ESG-ready reporting from one calm workspace.</p></div>
+        <div className={styles.heroPanel}><span>Wallet balance</span><strong>NGN 3,100,000</strong><button>Fund wallet</button></div>
+      </section>
+      <div className={styles.statGrid}>{orgStats.map((stat) => <article key={stat.label} className={styles.statCard}><span>{stat.label}</span><strong>{stat.value}</strong><p>{stat.sub}</p></article>)}</div>
+      <div className={styles.contentGrid}>
+        <section className={styles.card}>
+          <div className={styles.cardHeader}><div><h2>Active portfolio</h2><p>14 active | 6 matched | 3 fulfilled</p></div><button className={styles.headerBtn}>View all</button></div>
+          <div className={styles.tableWrap}><table className={styles.table}><thead><tr><th>Facility</th><th>Category</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody>{orgPortfolio.map((row) => <tr key={row.facility}><td><strong>{row.facility}</strong><span>{row.location} | {row.children} children</span></td><td><span className={styles.categoryTag}>{row.category}</span></td><td className={styles.amount}>{row.amount}</td><td><span className={`${styles.status} ${statusClass[row.status]}`}>{row.status}</span></td><td><button className={styles.moreBtn} aria-label={`More actions for ${row.facility}`}><MoreHorizontal size={18} /></button></td></tr>)}</tbody></table></div>
+        </section>
+        <aside className={styles.sideStack}>
+          <section className={styles.card}><div className={styles.sideTitle}><SlidersHorizontal size={18} /><h2>Giving parameters</h2></div><dl className={styles.paramList}><div><dt>Annual budget</dt><dd>NGN 5,000,000</dd></div><div><dt>Categories</dt><dd className={styles.tags}><span>Food</span><span>Medical</span><span>Education</span></dd></div><div><dt>Geography</dt><dd>Lagos, Abuja, Rivers</dd></div><div><dt>Transaction fee</dt><dd>1.5% per need</dd></div></dl><button className={styles.outlineBtn}>Edit parameters</button></section>
+          <section className={styles.esgCard}><ShieldCheck size={22} /><h2>Q2 2026 ESG report ready</h2><p>Auto-generated report with photo evidence, delivery notes, and impact totals.</p><button><Download size={16} /> Download PDF</button></section>
+        </aside>
       </div>
     </div>
-    
   );
 }

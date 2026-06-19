@@ -1,16 +1,4 @@
-.root {
-  min-height: 100vh;
-  background: #f8f9fa;
-  font-family: "Outfit", -apple-system, sans-serif;
-}
-
-.body {
-  display: flex;
-  min-height: calc(100vh - 60px);
-}
-
-.main {
-  flex: 1;
-  padding: 2rem;
-  overflow-x: hidden;
-}
+﻿.root { --brand: #16a34a; --navy: #0f2a5e; min-height: 100vh; background: #f8fafc; color: #0f172a; }
+.body { display: flex; min-height: calc(100vh - 72px); }
+.main { flex: 1; min-width: 0; padding: 28px; overflow-x: hidden; }
+@media (max-width: 860px) { .body { display: block; } .main { padding: 20px 16px 96px; } }

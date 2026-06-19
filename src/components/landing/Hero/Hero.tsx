@@ -18,7 +18,7 @@ export default function Hero() {
           </h1>
 
           <p className={styles.sub}>
-            CareBridge Africa makes real needs visible by connecting verified
+            CareBridge OVC makes real needs visible by connecting verified
             orphanages, vulnerable children, and underserved communities with
             donors who want to create lasting impact.
           </p>

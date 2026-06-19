@@ -71,26 +71,14 @@
 }
 
 /* ════════════════════════════════════
-   GRID
+   GRID (RESPONSIVE FIXED)
 ═══════════════════════════════════ */
 
 .grid3 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 65px;
-  justify-items: center;
-}
-
-@media (max-width: 900px) {
-  .grid3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .grid3 {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  justify-items: stretch;
 }
 
 /* ════════════════════════════════════
@@ -105,12 +93,12 @@
 }
 
 /* ════════════════════════════════════
-   NEED CARD
+   NEED CARD (RESPONSIVE FIXED)
 ═══════════════════════════════════ */
 
 .needCard {
   width: 100%;
-  min-width: 370px;
+  max-width: 420px;
   cursor: pointer;
   padding: 26px;
   border-radius: 26px;
@@ -290,7 +278,7 @@
 
 .btnDetail:hover {
   background: #15803d;
-
+  color: white;
 }
 
 /* ════════════════════════════════════
@@ -323,4 +311,34 @@
 .low {
   background: #e5e7eb;
   color: #374151;
+}
+
+/* ════════════════════════════════════
+   RESPONSIVE TWEAKS
+═══════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 16px;
+  }
+
+  .grid3 {
+    gap: 16px;
+  }
+
+  .needCard {
+    padding: 20px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .needPrice {
+    font-size: 20px;
+  }
+
+  .btnFund,
+  .btnDetail {
+    width: 100%;
+  }
 }

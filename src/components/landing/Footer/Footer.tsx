@@ -26,14 +26,13 @@ export default function Footer() {
           <h4>Platform</h4>
           <Link href="/needs">Explore Needs</Link>
           <Link href="#donors">Donors</Link>
-          <Link href="/registration">Orphanages</Link>
-          <Link href="#impact">Impact Stories</Link>
+          <Link href="#featured-topics"> Stories</Link>
         </div>
 
         <div className={styles.col}>
           <h4>Support</h4>
           <a href="#">Help Center</a>
-          <a href="#">How It Works</a>
+          <Link href="/#how-it-works">How It Works</Link>
           <a href="#">Trust & Safety</a>
           <a href="#">Contact Us</a>
         </div>
